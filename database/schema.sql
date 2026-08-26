@@ -1,6 +1,8 @@
--- Camagru database foundation.
--- Domain tables are introduced incrementally by the authentication,
--- editor and gallery issues.
+-- Canonical schema reference for the Camagru database.
+-- The executable migration is database/001_initial_schema.sql.
+-- Keep this file synchronized with the latest initial domain schema.
+
+BEGIN;
 
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
@@ -12,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS password_reset_tokens (
+CREATE TABLE IF NOT EXISTS account_confirmation_tokens (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     token_hash TEXT NOT NULL UNIQUE,
@@ -21,7 +23,7 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS account_confirmation_tokens (
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     token_hash TEXT NOT NULL UNIQUE,
@@ -63,3 +65,5 @@ CREATE INDEX IF NOT EXISTS idx_images_created_at ON images(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_images_user_id ON images(user_id);
 CREATE INDEX IF NOT EXISTS idx_comments_image_id ON comments(image_id);
 CREATE INDEX IF NOT EXISTS idx_likes_image_id ON likes(image_id);
+
+COMMIT;
